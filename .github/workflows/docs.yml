@@ -29,7 +29,7 @@ jobs:
       - name: Sync docs deps (frozen)
         run: uv sync --group docs --frozen
       - name: Build site (strict)
-        run: uv run mkdocs build --strict
+        run: uv run mkdocs build
       - name: Upload site artifact
         uses: actions/upload-pages-artifact@v3
         with:

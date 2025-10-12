@@ -1,0 +1,64 @@
+site_name: Orthant
+site_description: Natural-language queries across SQL, Parquet, and LanceDB.
+# site_url: https://<your-user>.github.io/<your-repo>/
+# repo_url: https://github.com/<your-user>/<your-repo>
+# repo_name: <your-user>/<your-repo>
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.top
+    - content.code.copy
+    - search.suggest
+    - search.share
+    - toc.integrate
+  palette:
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: teal
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: teal
+
+plugins:
+  - search
+  - git-revision-date-localized:
+      fallback_to_build_date: true
+  - minify:
+      minify_html: true
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - toc:
+      permalink: true
+
+nav:
+  - Overview: index.md
+  - Quickstart: quickstart.md
+  - Guides:
+      - Data Sources: guides/data-sources.md
+      - Agents: guides/agents.md
+      - CLI: guides/cli.md
+  - Reference:
+      - API: reference/api.md
+      - Config: reference/config.md
+  - Cookbook:
+      - "SQL + Vector Join": cookbook/sql-vector-join.md
+      - Parquet Queries: cookbook/parquet.md
+  - FAQ: faq.md
+  - Changelog: changelog.md

@@ -4,7 +4,15 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14.0"
-dependencies = []
+dependencies = [
+    "dependency-injector>=4.48.2",
+    "fastapi>=0.119.0",
+    "mistral-haystack>=0.5.0",
+    "mistralai>=1.9.11",
+    "python-dotenv>=1.1.1",
+    "pyyaml>=6.0.3",
+    "uvicorn>=0.38.0",
+]
 
 [dependency-groups]
 docs = [
@@ -12,4 +20,16 @@ docs = [
     "mkdocs-git-revision-date-localized-plugin>=1.4.7",
     "mkdocs-material>=9.6.21",
     "mkdocs-minify-plugin>=0.8.0",
+]
+test = [
+    "pytest>=8.4.2",
+]
+
+[tool.uv.workspace]
+members = [
+    "packages/orthant-datasets",
+    "packages/orthant-runtime",
+    "packages/orthant-mistral",
+    "packages/orthant-core",
+    "packages/orthant-haystack",
 ]

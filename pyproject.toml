@@ -3,7 +3,7 @@ name = "orthant"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.14.0"
+requires-python = ">=3.13"
 dependencies = [
     "dependency-injector>=4.48.2",
     "fastapi>=0.119.0",
@@ -22,7 +22,10 @@ docs = [
     "mkdocs-minify-plugin>=0.8.0",
 ]
 test = [
+    "moto>=5.1.15",
     "pytest>=8.4.2",
+    "pytest-asyncio>=1.2.0",
+    "s3fs>=2025.9.0",
 ]
 
 [tool.uv.workspace]
@@ -32,4 +35,9 @@ members = [
     "packages/orthant-mistral",
     "packages/orthant-core",
     "packages/orthant-haystack",
+    "packages/orthant-lance",
 ]
+
+
+[tool.uv.sources]
+orthant-lance = { workspace = true }

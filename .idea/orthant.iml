@@ -9,9 +9,14 @@
       <sourceFolder url="file://$MODULE_DIR$/packages/orthant-haystack/src" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/packages/orthant-haystack/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/packages/orthant-mistral/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/packages/orthant-lance/src" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/packages/orthant-core/tests" isTestSource="true" />
+      <sourceFolder url="file://$MODULE_DIR$/packages/orthant-lance/tests" isTestSource="true" />
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
+      <excludeFolder url="file://$MODULE_DIR$/.venv-3.13" />
+      <excludeFolder url="file://$MODULE_DIR$/.venv-gil" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.14 (orthant)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="uv (orthant)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TestRunnerService">

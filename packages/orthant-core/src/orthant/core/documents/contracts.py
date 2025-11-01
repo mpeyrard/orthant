@@ -23,5 +23,9 @@ class OrthantDocumentNodeChunk(BaseModel):
 @runtime_checkable
 class DocumentReader(Protocol):
     """Document reader protocol"""
+
+    def can_read(self, file_uri: str) -> bool:
+        ...
+
     def read_file(self, file_uri: str) -> OrthantDocument:
         ...

@@ -9,7 +9,7 @@ class ContentLoader(Protocol):
     async def load_text_async(self, uri: str, *, encoding: str = "utf-8") -> str: ...
     async def load_bytes_async(self, uri: str) -> bytes: ...
 
-class DefaultContentLoader:
+class DefaultContentLoader(ContentLoader):
     def load_text(self, uri: str, *, encoding: str = "utf-8") -> str:
         """Load text from a URI"""
         with fsspec.open(uri, "r", encoding=encoding) as f:

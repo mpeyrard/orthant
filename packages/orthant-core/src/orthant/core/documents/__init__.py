@@ -1,5 +1,6 @@
 from .content_loader import ContentLoader, DefaultContentLoader
 from .contracts import *
+from .text_reader import TextDocumentReader
 
 
 __all__ = [
@@ -7,8 +8,9 @@ __all__ = [
     ContentLoader.__name__,
     DefaultContentLoader.__name__,
     # contracts
-    Document.__name__,
-    DocumentNodeChunk.__name__,
-    TextDocumentNode.__name__,
-    ImageDocumentNode.__name__,
+    OrthantDocument.__name__,
+    OrthantDocumentNodeChunk.__name__,
+    OrthantDocumentNode.__name__,
+    # text_reader
+    TextDocumentReader.__name__,
 ]

@@ -1,25 +1,19 @@
-from pydantic import BaseModel
-from typing import runtime_checkable, IO, Protocol
+from pydantic import BaseModel, Field
+from typing import runtime_checkable, Protocol
 
 
-class TextDocumentNode(BaseModel):
+class OrthantDocumentNode(BaseModel):
     """Represents a text node in a document."""
     node_path: str
     content: str
 
-class ImageDocumentNode(BaseModel):
-    """Represents an image node in a document."""
-    node_path: str
-    content: bytes
-
-class Document(BaseModel):
+class OrthantDocument(BaseModel):
     """Represents a document."""
     document_id: str
     source_uri: str
-    text_nodes: list[TextDocumentNode] = []
-    image_nodes: list[ImageDocumentNode] = []
+    nodes: list[OrthantDocumentNode] = Field(default_factory=list)
 
-class DocumentNodeChunk(BaseModel):
+class OrthantDocumentNodeChunk(BaseModel):
     """Represents a chunk of a document node. Chunks are derived from nodes."""
     document_id: str
     node_path: str
@@ -29,5 +23,5 @@ class DocumentNodeChunk(BaseModel):
 @runtime_checkable
 class DocumentReader(Protocol):
     """Document reader protocol"""
-    def read_file(self, file: IO[str] | IO[bytes]) -> Document:
+    def read_file(self, file_uri: str) -> OrthantDocument:
         ...

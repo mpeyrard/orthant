@@ -38,6 +38,12 @@ members = [
     "packages/orthant-lance",
 ]
 
-
 [tool.uv.sources]
+orthant-haystack = { workspace = true }
 orthant-lance = { workspace = true }
+
+[tool.pytest.ini_options]
+markers = [
+  "unit: fast, isolated tests",
+  "system: touches I/O or external services",
+]

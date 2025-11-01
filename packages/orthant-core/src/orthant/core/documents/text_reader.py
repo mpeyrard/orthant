@@ -1,18 +1,24 @@
-from typing import IO
 from uuid import uuid4
 
-from .contracts import Document, TextDocumentNode
+from .content_loader import ContentLoader
+from .contracts import OrthantDocument, OrthantDocumentNode
 
 
 class TextDocumentReader:
-    def read_file(self, file: IO[bytes] | IO[str]) -> Document:
+    """Loads a text file into a `Document`"""
+    def __init__(self, content_loader: ContentLoader):
+        self._content_loader = content_loader
+
+    def read_file(self, file_uri: str) -> OrthantDocument:
+        text_content = self._content_loader.load_text(file_uri)
         doc_id = str(uuid4())
-        return Document(
+        return OrthantDocument(
             document_id=doc_id,
-            text_nodes=[
-                TextDocumentNode(
-                    node_path=doc_id,
-                    content=file.read()
+            source_uri=file_uri,
+            nodes=[
+                OrthantDocumentNode(
+                    node_path="1",
+                    content=text_content
                 )
             ]
         )

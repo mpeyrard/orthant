@@ -41,6 +41,7 @@ members = [
 ]
 
 [tool.uv.sources]
+orthant-documents = { workspace = true }
 orthant-haystack = { workspace = true }
 orthant-lance = { workspace = true }
 

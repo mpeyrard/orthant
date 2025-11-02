@@ -36,6 +36,8 @@ members = [
     "packages/orthant-core",
     "packages/orthant-haystack",
     "packages/orthant-lance",
+    "packages/orthant-embedding",
+    "packages/orthant-documents",
 ]
 
 [tool.uv.sources]

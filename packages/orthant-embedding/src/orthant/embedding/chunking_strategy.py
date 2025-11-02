@@ -1,5 +1,5 @@
-from typing import runtime_checkable, Protocol
-from ..documents import OrthantDocument, OrthantDocumentNodeChunk
+from typing import Protocol, runtime_checkable
+from orthant.documents import OrthantDocument, OrthantDocumentNodeChunk
 
 
 @runtime_checkable

@@ -11,7 +11,11 @@ requires-python = ">=3.13"
 dependencies = [
     "haystack-ai>=2.19.0",
     "nltk>=3.9.2",
+    "orthant-haystack"
 ]
+
+[tool.uv.sources]
+orthant-haystack = { workspace = true }
 
 [tool.setuptools.packages.find]
 where = ["src"]

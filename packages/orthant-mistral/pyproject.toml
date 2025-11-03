@@ -1,7 +1,21 @@
+[build-system]
+requires = ["uv_build>=0.9.4,<0.10.0"]
+build-backend = "uv_build"
+
 [project]
 name = "orthant-mistral"
 version = "0.1.0"
-description = "Add your description here"
+description = "Mistral embedding client for Orthant"
 readme = "README.md"
-requires-python = ">=3.13"
-dependencies = []
+requires-python = ">=3.13.8"
+dependencies = [
+    "orthant-embedding",
+    "httpx>=0.24.0",
+    "mistralai>=1.9",
+]
+
+[tool.uv.build-backend]
+module-name = "orthant.mistral"
+
+[tool.uv.sources]
+orthant-embedding = { workspace = true }

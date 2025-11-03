@@ -44,6 +44,7 @@ members = [
 orthant-documents = { workspace = true }
 orthant-haystack = { workspace = true }
 orthant-lance = { workspace = true }
+orthant-mistral = { workspace = true }
 
 [tool.pytest.ini_options]
 markers = [

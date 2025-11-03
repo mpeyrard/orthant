@@ -9,3 +9,6 @@ dependencies = [
     "orthant-documents",
     "pyarrow>=22.0.0",
 ]
+
+[tool.uv.sources]
+orthant-documents = { workspace = true }

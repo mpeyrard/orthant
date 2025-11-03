@@ -1,6 +1,1 @@
-from .impl import MistralEmbeddingModel
-
-
-__all__ = [
-    MistralEmbeddingModel.__name__
-]
+from .mistral_embedding_client import MistralEmbeddingClient

@@ -1,6 +1,6 @@
 import datetime as dt
 import lancedb
-from typing import Optional, Any
+from typing import Any
 
 from orthant.documents import OrthantDocument, OrthantDocumentNodeChunk
 from .documents import make_document_chunk_lance_schema
@@ -17,22 +17,23 @@ class LanceDocumentStorage:
     def __init__(
         self,
         uri: str,
-        table_name: str = "documents",
-        embedding_dim: Optional[int] = None,
+        table_name: str,
+        embedding_dim: int,
     ):
         """
         Initialize the Lance document storage.
 
         Args:
             uri: Path to the LanceDB database
-            table_name: Name of the table to store documents (default: "documents")
-            embedding_dim: Dimension of the embedding vectors. If None, schema won't include embeddings.
+            table_name: Name of the table to store documents (required)
+            embedding_dim: Dimension of the embedding vectors (required, must be > 0)
         """
         self.uri = uri
         self.table_name = table_name
         self.embedding_dim = embedding_dim
         self._db = lancedb.connect(uri)
-        self._schema = make_document_chunk_lance_schema(embedding_dim) if embedding_dim else None
+        # Always create a schema for document chunks since embedding_dim is required
+        self._schema = make_document_chunk_lance_schema(embedding_dim)
         self._table = None
 
     def _get_or_create_table(self):
@@ -57,24 +58,17 @@ class LanceDocumentStorage:
         """
         records = []
         created_at = dt.datetime.now(dt.timezone.utc)
-
         for node in document.nodes:
             record: dict[str, Any] = {
                 "source_uri": document.source_uri,
                 "node_path": node.node_path,
-                "node_chunk_index": 0,  # Full node as single chunk
-                "modality": "text",  # Default modality
+                "node_chunk_index": 0,
+                "modality": "text",
                 "created_at": created_at,
                 "content": node.content,
+                "embedding": [0.0] * self.embedding_dim
             }
-
-            # Only add embedding if schema supports it
-            if self.embedding_dim:
-                # Initialize with zero vector if no embedding provided
-                record["embedding"] = [0.0] * self.embedding_dim
-
             records.append(record)
-
         return records
 
     def _chunk_to_lance_record(self, chunk: OrthantDocumentNodeChunk) -> dict[str, Any]:
@@ -88,19 +82,14 @@ class LanceDocumentStorage:
             Lance-compatible record
         """
         record: dict[str, Any] = {
-            "source_uri": chunk.document_id,  # Using document_id as source_uri
+            "source_uri": chunk.document_id,
             "node_path": chunk.node_path,
             "node_chunk_index": chunk.node_chunk_index,
-            "modality": "text",  # Default modality
+            "modality": "text",
             "created_at": dt.datetime.now(dt.timezone.utc),
             "content": chunk.content,
+            "embedding": [0.0] * self.embedding_dim
         }
-
-        # Only add embedding if schema supports it
-        if self.embedding_dim:
-            # Initialize with zero vector if no embedding provided
-            record["embedding"] = [0.0] * self.embedding_dim
-
         return record
 
     async def store_async(self, document: OrthantDocument) -> None:
@@ -115,7 +104,7 @@ class LanceDocumentStorage:
         if not records:
             return
 
-        # Add records to table, creating it if needed
+        # Add records to the table, creating it if needed
         if self._table is None:
             self._table = self._db.create_table(
                 self.table_name,

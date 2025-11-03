@@ -113,31 +113,14 @@ async def test_store_chunks():
 
 @pytest.mark.asyncio
 async def test_store_document_without_embeddings():
-    """Test storing a document without embedding dimension."""
+    """Test storing a document without embedding dimension should raise."""
     with tempfile.TemporaryDirectory() as tmpdir:
-        storage = LanceDocumentStorage(
-            uri=tmpdir,
-            table_name="test_docs_no_embed",
-            embedding_dim=None
-        )
-
-        # Create a test document
-        doc = OrthantDocument(
-            document_id="doc1",
-            source_uri="file:///test.txt",
-            nodes=[
-                OrthantDocumentNode(
-                    node_path="/page/1",
-                    content="This is test content without embeddings."
-                )
-            ]
-        )
-
-        # Store the document
-        await storage.store_async(doc)
-
-        # Verify table was created
-        assert storage._table is not None
+        with pytest.raises(ValueError):
+            LanceDocumentStorage(
+                uri=tmpdir,
+                table_name="test_docs_no_embed",
+                embedding_dim=None
+            )
 
 
 @pytest.mark.asyncio

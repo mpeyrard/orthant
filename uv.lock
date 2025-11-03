@@ -1433,6 +1433,7 @@ dependencies = [
 requires-dist = [
     { name = "haystack-ai", specifier = ">=2.19.0" },
     { name = "nltk", specifier = ">=3.9.2" },
+    { name = "orthant-haystack", editable = "packages/orthant-haystack" },
 ]
 
 [[package]]
@@ -1455,7 +1456,19 @@ requires-dist = [
 [[package]]
 name = "orthant-mistral"
 version = "0.1.0"
-source = { virtual = "packages/orthant-mistral" }
+source = { editable = "packages/orthant-mistral" }
+dependencies = [
+    { name = "httpx" },
+    { name = "mistralai" },
+    { name = "orthant-embedding" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "httpx", specifier = ">=0.24.0" },
+    { name = "mistralai", specifier = ">=1.9" },
+    { name = "orthant-embedding", editable = "packages/orthant-embedding" },
+]
 
 [[package]]
 name = "orthant-runtime"

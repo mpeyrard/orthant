@@ -9,6 +9,7 @@ dependencies = [
     "fastapi>=0.119.0",
     "mistral-haystack>=0.5.0",
     "mistralai>=1.9.11",
+    "numpy>=2.3.4",
     "python-dotenv>=1.1.1",
     "pyyaml>=6.0.3",
     "uvicorn>=0.38.0",
@@ -48,6 +49,8 @@ orthant-lance = { workspace = true }
 orthant-mistral = { workspace = true }
 
 [tool.pytest.ini_options]
+testpaths=["packages"]
+python_files=["test_*.py", "*_test.py"]
 markers = [
   "unit: fast, isolated tests",
   "system: touches I/O or external services",

@@ -1,27 +1,28 @@
-# orthant-embedding
+orthant-embedding
+==================
 
-Embedding utilities for the Orthant framework.
+Embedding interfaces and helpers for Orthant.
 
-## Installation
+Install (editable, dev):
 
 ```bash
-uv add orthant-embedding
+. .venv/bin/activate
+python -m pip install -e packages/orthant-embedding
 ```
 
-## Usage
+Quick usage:
 
 ```python
-from orthant.embedding import ...
+from orthant.embedding import ChunkingStrategy
+# implement a ChunkingStrategy and use it to split documents for embedding
 ```
 
-## Features
+Run tests (if any):
 
-- TODO: Add features here
+```bash
+pytest packages/orthant-embedding -q
+```
 
-## Development
-
-This package is part of the Orthant workspace and uses namespaced packaging under the `orthant` namespace.
-
-## License
-
-TODO: Add license information
+Notes:
+- Contains the `EmbeddingClient` protocol and `ChunkingStrategy` protocol.
+- Providers (e.g., Mistral) implement `EmbeddingClient` in separate packages.

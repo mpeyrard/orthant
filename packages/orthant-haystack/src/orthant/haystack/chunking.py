@@ -1,8 +1,9 @@
 from haystack import Document
 from haystack.components.preprocessors import DocumentPreprocessor
 
-from orthant.core import ChunkingStrategy
-from orthant.core.documents import OrthantDocument, OrthantDocumentNodeChunk
+from orthant.documents import OrthantDocument, OrthantDocumentNodeChunk
+from orthant.embedding import ChunkingStrategy
+
 
 class HaystackChunkingStrategy(ChunkingStrategy):
     def __init__(self, document_preprocessor: DocumentPreprocessor):

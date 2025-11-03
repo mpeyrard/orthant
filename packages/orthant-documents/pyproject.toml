@@ -1,14 +1,28 @@
 [build-system]
-requires = ["uv_build>=0.9.4,<0.10.0"]
-build-backend = "uv_build"
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "orthant-documents"
 version = "0.1.0"
-description = "Add your description here"
+description = "Orthant documents package"
 readme = "README.md"
 requires-python = ">=3.13.8"
-dependencies = []
+dependencies = [
+    "fsspec>=2025.9.0",
+]
 
-[tool.uv.build-backend]
-module-name = "orthant.documents"
+[project.optional-dependencies]
+test = [
+    "pytest>=8.4.2",
+    "pytest-asyncio>=1.2.0",
+]
+
+[tool.setuptools]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["orthant*"]
+
+[tool.setuptools.package-dir]
+"" = "src"

@@ -5,7 +5,6 @@ requires-python = ">=3.13.8"
 [manifest]
 members = [
     "orthant",
-    "orthant-core",
     "orthant-datasets",
     "orthant-documents",
     "orthant-embedding",
@@ -1375,17 +1374,6 @@ test = [
 ]
 
 [[package]]
-name = "orthant-core"
-version = "0.1.0"
-source = { virtual = "packages/orthant-core" }
-dependencies = [
-    { name = "fsspec" },
-]
-
-[package.metadata]
-requires-dist = [{ name = "fsspec", specifier = ">=2025.9.0" }]
-
-[[package]]
 name = "orthant-datasets"
 version = "0.1.0"
 source = { editable = "packages/orthant-datasets" }
@@ -1393,21 +1381,39 @@ dependencies = [
     { name = "fastapi" },
 ]
 
-[package.dev-dependencies]
+[package.optional-dependencies]
 test = [
     { name = "pytest" },
 ]
 
 [package.metadata]
-requires-dist = [{ name = "fastapi", specifier = ">=0.119.0" }]
-
-[package.metadata.requires-dev]
-test = [{ name = "pytest", specifier = ">=8.4.2" }]
+requires-dist = [
+    { name = "fastapi", specifier = ">=0.119.0" },
+    { name = "pytest", marker = "extra == 'test'", specifier = ">=8.4.2" },
+]
+provides-extras = ["test"]
 
 [[package]]
 name = "orthant-documents"
 version = "0.1.0"
 source = { editable = "packages/orthant-documents" }
+dependencies = [
+    { name = "fsspec" },
+]
+
+[package.optional-dependencies]
+test = [
+    { name = "pytest" },
+    { name = "pytest-asyncio" },
+]
+
+[package.metadata]
+requires-dist = [
+    { name = "fsspec", specifier = ">=2025.9.0" },
+    { name = "pytest", marker = "extra == 'test'", specifier = ">=8.4.2" },
+    { name = "pytest-asyncio", marker = "extra == 'test'", specifier = ">=1.2.0" },
+]
+provides-extras = ["test"]
 
 [[package]]
 name = "orthant-embedding"
@@ -1433,7 +1439,6 @@ dependencies = [
 requires-dist = [
     { name = "haystack-ai", specifier = ">=2.19.0" },
     { name = "nltk", specifier = ">=3.9.2" },
-    { name = "orthant-haystack", editable = "packages/orthant-haystack" },
 ]
 
 [[package]]

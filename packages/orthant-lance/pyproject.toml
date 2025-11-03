@@ -1,7 +1,11 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "orthant-lance"
 version = "0.1.0"
-description = "Add your description here"
+description = "LanceDB integration for Orthant"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -9,6 +13,15 @@ dependencies = [
     "orthant-documents",
     "pyarrow>=22.0.0",
 ]
+
+[tool.setuptools]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["orthant*"]
+
+[tool.setuptools.package-dir]
+"" = "src"
 
 [tool.uv.sources]
 orthant-documents = { workspace = true }

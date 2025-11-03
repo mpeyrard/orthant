@@ -1,26 +1,33 @@
 [build-system]
-requires = ["uv_build>=0.9.4,<0.10.0"]
-build-backend = "uv_build"
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "orthant-datasets"
 version = "0.1.0"
-description = "Add your description here"
+description = "Datasets utilities for Orthant"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.119.0",
 ]
 
-[dependency-groups]
+[project.optional-dependencies]
 test = [
     "pytest>=8.4.2",
 ]
 
-[tool.uv.build-backend]
-module-name = "orthant.datasets"
+[tool.setuptools]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["orthant*"]
+
+[tool.setuptools.package-dir]
+"" = "src"
 
 [tool.pytest.ini_options]
+# Retain helpful pytest config
 testpaths = ["tests"]
 pythonpath = ["src"]
 markers = ["unit: unit tests"]

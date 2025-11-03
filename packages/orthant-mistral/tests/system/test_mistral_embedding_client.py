@@ -1,9 +1,26 @@
+import sys
+from pathlib import Path
 import os
+
+# Add workspace package src directories to sys.path so tests can import `orthant.*`
+repo_root = Path(__file__).resolve()
+for parent in repo_root.parents:
+    if (parent / "pyproject.toml").exists() or (parent / ".git").exists():
+        repo_root = parent
+        break
+packages_dir = repo_root / "packages"
+if packages_dir.exists():
+    for child in packages_dir.iterdir():
+        src = child / "src"
+        if src.exists():
+            sys.path.insert(0, str(src))
+
 import dotenv
 import pytest
 from pathlib import Path
 
-from orthant.mistral import MistralEmbeddingClient
+# Import the client directly from the module to avoid relying on package __init__
+from orthant.mistral.mistral_embedding_client import MistralEmbeddingClient
 
 
 def _has_env(p: Path):
@@ -24,6 +41,10 @@ def _load_env():
 
 _load_env()
 api_key = os.environ.get("MISTRAL_API_KEY")
+
+# If no API key, skip all tests in this module (useful for local runs)
+if not api_key:
+    pytest.skip("MISTRAL_API_KEY not set; skipping system tests", allow_module_level=True)
 
 @pytest.mark.system
 class TestMistralEmbeddingClient:

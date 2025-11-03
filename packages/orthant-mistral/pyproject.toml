@@ -1,6 +1,6 @@
 [build-system]
-requires = ["uv_build>=0.9.4,<0.10.0"]
-build-backend = "uv_build"
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "orthant-mistral"
@@ -14,8 +14,11 @@ dependencies = [
     "mistralai>=1.9",
 ]
 
-[tool.uv.build-backend]
-module-name = "orthant.mistral"
+[tool.setuptools]
 
-[tool.uv.sources]
-orthant-embedding = { workspace = true }
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["orthant*"]
+
+[tool.setuptools.package-dir]
+"" = "src"

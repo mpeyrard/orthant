@@ -1,14 +1,20 @@
 [build-system]
-requires = ["uv_build>=0.9.4,<0.10.0"]
-build-backend = "uv_build"
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "orthant-runtime"
 version = "0.1.0"
-description = "Add your description here"
+description = "Runtime helpers for Orthant"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = []
 
-[tool.uv.build-backend]
-module-name = "orthant.runtime"
+[tool.setuptools]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+include = ["orthant*"]
+
+[tool.setuptools.package-dir]
+"" = "src"

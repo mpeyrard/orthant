@@ -3,7 +3,7 @@ import pyarrow as pa
 import pytest
 import lancedb
 
-from orthant.lance.documents import make_document_chunk_lance_schema
+from orthant.lance.documents import make_document_chunk, make_document_chunk_lance_schema
 
 
 @pytest.mark.unit
@@ -19,19 +19,21 @@ class TestLanceDocumentsSchema:
         now = dt.datetime(2025, 1, 1, 12, 0, 0)
 
         docs = [
-            doc_schema(
+            make_document_chunk(
                 source_uri="file://handbook.md",
                 node_path="page/1/para/1",
                 modality="text",
                 created_at=now,
+                node_chunk_index=0,
                 content="Deploy with Cloudflare via Workers and KV.",
                 embedding=[0.1] * n_dims,
             ),
-            doc_schema(
+            make_document_chunk(
                 source_uri="file://handbook.md",
                 node_path="page/2/figure/1",
                 modality="image",
                 created_at=now,
+                node_chunk_index=0,
                 content="Architecture diagram: two clusters and an API gateway.",
                 embedding=[0.2] * n_dims,
             ),

@@ -1,3 +1,2 @@
-from .vector_store import LanceVectorStore
 from .documents import make_document_chunk_lance_schema
 from .document_storage import LanceDocumentStorage

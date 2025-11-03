@@ -1,6 +1,7 @@
 import pytest
+
+from orthant.documents import OrthantDocument, OrthantDocumentNode
 from orthant.haystack import HaystackChunkingStrategy
-from orthant.core.documents import OrthantDocument, OrthantDocumentNode
 
 
 @pytest.mark.unit

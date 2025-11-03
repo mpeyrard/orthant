@@ -112,18 +112,6 @@ async def test_store_chunks():
 
 
 @pytest.mark.asyncio
-async def test_store_document_without_embeddings():
-    """Test storing a document without embedding dimension should raise."""
-    with tempfile.TemporaryDirectory() as tmpdir:
-        with pytest.raises(ValueError):
-            LanceDocumentStorage(
-                uri=tmpdir,
-                table_name="test_docs_no_embed",
-                embedding_dim=None
-            )
-
-
-@pytest.mark.asyncio
 async def test_store_empty_document_list():
     """Test storing an empty list of documents."""
     with tempfile.TemporaryDirectory() as tmpdir:

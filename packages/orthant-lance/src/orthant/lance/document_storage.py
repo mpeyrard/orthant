@@ -1,3 +1,10 @@
+"""LanceDB-backed document storage implementation.
+
+This module provides `LanceDocumentStorage`, a concrete storage implementation
+that writes document nodes and chunks into a LanceDB table. The storage
+expects a fixed embedding dimensionality (embedding_dim) and will include an
+`embedding` field for each record.
+"""
 import datetime as dt
 import lancedb
 from typing import Any
@@ -96,6 +103,11 @@ class LanceDocumentStorage:
         """
         Store a single document asynchronously.
 
+        This method converts the document into LanceDB record format and adds
+        the records to the specified table. If the table does not exist, it
+        will be created. The embedding field in the records is initialized
+        to zero vectors.
+
         Args:
             document: The document to store
         """
@@ -117,6 +129,11 @@ class LanceDocumentStorage:
     async def store_batch_async(self, documents: list[OrthantDocument]) -> None:
         """
         Store multiple documents asynchronously.
+
+        This method converts each document in the list into LanceDB record
+        format and adds all the records to the specified table. The table
+        will be created if it does not exist. Each record's embedding field
+        is initialized to a zero vector.
 
         Args:
             documents: List of documents to store
@@ -146,6 +163,11 @@ class LanceDocumentStorage:
     async def store_chunks_async(self, chunks: list[OrthantDocumentNodeChunk]) -> None:
         """
         Store document chunks asynchronously.
+
+        This method converts each chunk in the list into LanceDB record format
+        and adds all the records to the specified table. The table will be
+        created if it does not exist. Each record's embedding field is
+        initialized to a zero vector.
 
         Args:
             chunks: List of chunks to store

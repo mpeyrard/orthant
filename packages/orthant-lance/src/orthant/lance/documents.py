@@ -1,10 +1,23 @@
+"""LanceDB document helpers and schema factory.
+
+This module contains helpers to create a PyArrow schema suitable for LanceDB
+and a helper to build Lance-compatible document records.
+"""
 import datetime as dt
 import pyarrow as pa
 from typing import Any
 
 
 def make_document_chunk_lance_schema(n_dims: int) -> pa.Schema:
-    """Creates the data type to represent a document chunk in Lance."""
+    """Create a PyArrow schema for storing document chunks in Lance.
+
+    Args:
+        n_dims: The embedding vector dimension. This creates a fixed-size list
+            field for `embedding` with the specified number of float32 values.
+
+    Returns:
+        A `pyarrow.Schema` instance describing the document chunk record.
+    """
     lance_schema = pa.schema([
         pa.field("source_uri", pa.string()),
         pa.field("node_path", pa.string()),
@@ -26,6 +39,20 @@ def make_document_chunk(
         content: str,
         embedding: list[float]
 ) -> dict[str, Any]:
+    """Build a Lance-compatible record dictionary for a document chunk.
+
+    Args:
+        source_uri: Original document source URI
+        node_path: Path for the node within the document
+        node_chunk_index: Index of the chunk within the node
+        modality: Modality label (e.g., 'text', 'image')
+        created_at: Creation timestamp (timezone-aware)
+        content: The textual content of the chunk
+        embedding: Embedding vector for the chunk
+
+    Returns:
+        Dictionary matching the field names defined in the Lance schema.
+    """
     return dict(
         source_uri=source_uri,
         node_path=node_path,

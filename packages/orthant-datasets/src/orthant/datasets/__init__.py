@@ -1,17 +1,13 @@
+"""Orthant datasets package public API.
+
+This package contains the dataset registry, service, DI container, and the
+DatasetSpec model used to register and manage datasets.
+"""
+
 from .container import DatasetsContainer
 from .dataset_registry import DatasetRegistry, InMemoryDatasetRegistry
 from .dataset_service import DatasetService
 from .dataset_spec import DatasetSpec
 
-
-__all__ = [
-    # _container
-    DatasetsContainer.__name__,
-    # _dataset_registry
-    DatasetRegistry.__name__,
-    InMemoryDatasetRegistry.__name__,
-    # _dataset_service
-    DatasetService.__name__,
-    # _dataset_spec
-    DatasetSpec.__name__
-]
+# Module exports are provided via the above imports. Avoid defining __all__ to
+# reduce maintenance and allow importing of additional symbols during testing.

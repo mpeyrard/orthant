@@ -1,11 +1,10 @@
-"""Dataset registry interfaces and an in-memory implementation.
-
+"""
+Dataset registry interfaces and an in-memory implementation.
 Defines the `DatasetRegistry` protocol and a simple `InMemoryDatasetRegistry`
 implementation for use in tests and simple deployments.
 """
 
 from typing import Protocol, runtime_checkable
-
 from .dataset_spec import DatasetSpec
 
 

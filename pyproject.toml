@@ -54,4 +54,5 @@ python_files=["test_*.py", "*_test.py"]
 markers = [
   "unit: fast, isolated tests",
   "system: touches I/O or external services",
+  "integration: multiple components working together tests",
 ]

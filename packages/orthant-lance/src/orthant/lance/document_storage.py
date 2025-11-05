@@ -1,189 +1,97 @@
-"""LanceDB-backed document storage implementation.
+"""
+LanceDB-backed document storage implementation.
 
-This module provides `LanceDocumentStorage`, a concrete storage implementation
-that writes document nodes and chunks into a LanceDB table. The storage
-expects a fixed embedding dimensionality (embedding_dim) and will include an
-`embedding` field for each record.
+This module provides a small, testable `LanceDocumentStorage` that accepts
+both full `OrthantDocument` objects (document nodes) and already-chunked
+`VectorDocumentNodeChunk` instances (which include an embedding `vector`).
 """
 import datetime as dt
 import lancedb
+import pyarrow as pa
 from typing import Any
-
-from orthant.documents import OrthantDocument, OrthantDocumentNodeChunk
-from .documents import make_document_chunk_lance_schema
+from orthant.embedding import VectorDocumentStorage, VectorDocumentNodeChunk
 
 
-class LanceDocumentStorage:
+def _make_document_chunk_lance_schema(n_dims: int) -> pa.Schema:
+    """Create a PyArrow schema for storing document chunks in Lance.
+
+    Args:
+        n_dims: The embedding vector dimension. This creates a fixed-size list
+            field for `embedding` with the specified number of float32 values.
+
+    Returns:
+        A `pyarrow.Schema` instance describing the document chunk record.
     """
-    Document storage implementation using LanceDB.
+    lance_schema = pa.schema([
+        pa.field("source_uri", pa.string()),
+        pa.field("node_path", pa.string()),
+        pa.field("node_chunk_index", pa.int64()),
+        pa.field("modality", pa.string()),
+        pa.field("created_at", pa.timestamp("us")),
+        pa.field("content", pa.string()),
+        pa.field("embedding", pa.list_(pa.float32(), n_dims)),
+    ])
+    return lance_schema
 
-    This class implements the OrthantDocumentStorage protocol for storing
-    documents and document chunks in LanceDB.
+
+def _get_or_create_table(uri: str, table_name: str, schema: pa.Schema):
+    """
+    Open an existing Lance table at `uri` named `table_name`, or create
+    an empty table if it does not exist.
+
+    This is a minimal helper used by callers that only have a URI and
+    table name; it returns the table-like object from lancedb.
+    """
+    db = lancedb.connect(uri)
+    try:
+        return db.open_table(table_name)
+    except Exception:
+        return db.create_table(table_name, data=[], mode="overwrite", schema=schema)
+
+
+def _convert_to_lance_doc(vector_doc: VectorDocumentNodeChunk) -> dict[str, Any]:
+    """Build a Lance-compatible record dictionary for a document chunk.
+
+    Args:
+        vector_doc: Vector document to convert into the Lance schema format
+
+    Returns:
+        Dictionary matching the field names defined in the Lance schema.
+    """
+    # Some VectorDocumentNodeChunk instances may not provide all optional
+    # metadata fields (source_uri, modality, created_at). Use sensible
+    # fallbacks so callers (and tests) don't fail when fields are omitted.
+    source_uri = getattr(vector_doc, "source_uri", None) or getattr(vector_doc, "document_id", None)
+    modality = getattr(vector_doc, "modality", "text")
+    created_at = getattr(vector_doc, "created_at", None) or dt.datetime.now(dt.timezone.utc)
+    return dict(
+        source_uri=source_uri,
+        node_path=vector_doc.node_path,
+        node_chunk_index=vector_doc.node_chunk_index,
+        modality=modality,
+        created_at=created_at,
+        content=vector_doc.content,
+        embedding=vector_doc.vector,
+    )
+
+
+class LanceDocumentStorage(VectorDocumentStorage):
+    """Minimal LanceDB-backed storage for document chunks and vectors.
+
+    This class focuses on correctness and testability. It does not implement
+    indexing or search — only persistent writes to a Lance table.
     """
 
-    def __init__(
-        self,
-        uri: str,
-        table_name: str,
-        embedding_dim: int,
-    ):
-        """
-        Initialize the Lance document storage.
-
-        Args:
-            uri: Path to the LanceDB database
-            table_name: Name of the table to store documents (required)
-            embedding_dim: Dimension of the embedding vectors (required, must be > 0)
-        """
+    def __init__(self, uri: str, table_name: str, embedding_dim: int):
         self.uri = uri
         self.table_name = table_name
         self.embedding_dim = embedding_dim
         self._db = lancedb.connect(uri)
-        # Always create a schema for document chunks since embedding_dim is required
-        self._schema = make_document_chunk_lance_schema(embedding_dim)
-        self._table = None
+        self._schema = _make_document_chunk_lance_schema(embedding_dim)
+        self._table = _get_or_create_table(uri, table_name, self._schema)
 
-    def _get_or_create_table(self):
-        """Get an existing table or create a new one."""
-        if self._table is None:
-            try:
-                self._table = self._db.open_table(self.table_name)
-            except Exception:
-                # Table doesn't exist, will be created on first add
-                pass
-        return self._table
-
-    def _document_to_lance_records(self, document: OrthantDocument) -> list[dict[str, Any]]:
-        """
-        Convert an OrthantDocument to Lance record format.
-
-        Args:
-            document: The document to convert
-
-        Returns:
-            List of Lance-compatible records (one per node)
-        """
-        records = []
-        created_at = dt.datetime.now(dt.timezone.utc)
-        for node in document.nodes:
-            record: dict[str, Any] = {
-                "source_uri": document.source_uri,
-                "node_path": node.node_path,
-                "node_chunk_index": 0,
-                "modality": "text",
-                "created_at": created_at,
-                "content": node.content,
-                "embedding": [0.0] * self.embedding_dim
-            }
-            records.append(record)
-        return records
-
-    def _chunk_to_lance_record(self, chunk: OrthantDocumentNodeChunk) -> dict[str, Any]:
-        """
-        Convert an OrthantDocumentNodeChunk to Lance record format.
-
-        Args:
-            chunk: The chunk to convert
-
-        Returns:
-            Lance-compatible record
-        """
-        record: dict[str, Any] = {
-            "source_uri": chunk.document_id,
-            "node_path": chunk.node_path,
-            "node_chunk_index": chunk.node_chunk_index,
-            "modality": "text",
-            "created_at": dt.datetime.now(dt.timezone.utc),
-            "content": chunk.content,
-            "embedding": [0.0] * self.embedding_dim
-        }
-        return record
-
-    async def store_async(self, document: OrthantDocument) -> None:
-        """
-        Store a single document asynchronously.
-
-        This method converts the document into LanceDB record format and adds
-        the records to the specified table. If the table does not exist, it
-        will be created. The embedding field in the records is initialized
-        to zero vectors.
-
-        Args:
-            document: The document to store
-        """
-        records = self._document_to_lance_records(document)
-
-        if not records:
-            return
-
-        # Add records to the table, creating it if needed
-        if self._table is None:
-            self._table = self._db.create_table(
-                self.table_name,
-                data=records,
-                mode="overwrite"
-            )
-        else:
-            self._table.add(records)
-
-    async def store_batch_async(self, documents: list[OrthantDocument]) -> None:
-        """
-        Store multiple documents asynchronously.
-
-        This method converts each document in the list into LanceDB record
-        format and adds all the records to the specified table. The table
-        will be created if it does not exist. Each record's embedding field
-        is initialized to a zero vector.
-
-        Args:
-            documents: List of documents to store
-        """
-        if not documents:
-            return
-
-        # Convert all documents to records
-        all_records = []
-        for document in documents:
-            records = self._document_to_lance_records(document)
-            all_records.extend(records)
-
-        if not all_records:
-            return
-
-        # Add all records to table, creating it if needed
-        if self._table is None:
-            self._table = self._db.create_table(
-                self.table_name,
-                data=all_records,
-                mode="overwrite"
-            )
-        else:
-            self._table.add(all_records)
-
-    async def store_chunks_async(self, chunks: list[OrthantDocumentNodeChunk]) -> None:
-        """
-        Store document chunks asynchronously.
-
-        This method converts each chunk in the list into LanceDB record format
-        and adds all the records to the specified table. The table will be
-        created if it does not exist. Each record's embedding field is
-        initialized to a zero vector.
-
-        Args:
-            chunks: List of chunks to store
-        """
-        if not chunks:
-            return
-
-        # Convert chunks to Lance record format
-        records = [self._chunk_to_lance_record(chunk) for chunk in chunks]
-
-        # Add records to table, creating it if needed
-        if self._table is None:
-            self._table = self._db.create_table(
-                self.table_name,
-                data=records,
-                mode="overwrite"
-            )
-        else:
-            self._table.add(records)
+    async def store_vector_document_async(self, document: VectorDocumentNodeChunk) -> None:
+        """Store a single pre-chunked vector document"""
+        lance_doc = _convert_to_lance_doc(document)
+        # lancedb expects an iterable/list of records
+        self._table.add(data=[lance_doc])

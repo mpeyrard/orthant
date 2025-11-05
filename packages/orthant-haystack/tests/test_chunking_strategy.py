@@ -123,7 +123,7 @@ Everything is version controlled in Git."""
         # Should have chunks from both nodes
         assert len(chunks) >= 2
 
-        # Verify all chunks have correct document_id
+        # Verify all chunks have the correct document_id
         assert all(chunk.document_id == "test-doc-3" for chunk in chunks)
 
         # Verify chunks from first node

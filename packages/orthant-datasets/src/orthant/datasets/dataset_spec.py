@@ -1,5 +1,5 @@
-"""Dataset specification data model.
-
+"""
+Dataset specification data model.
 Defines the `DatasetSpec` dataclass which contains the minimal metadata
 required to register and locate a dataset (storage format, URI, etc.).
 """

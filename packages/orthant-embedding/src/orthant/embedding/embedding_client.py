@@ -68,3 +68,7 @@ class EmbeddingClient(Protocol):
             A sequence (same order) of query embedding vectors.
         """  # pragma: no cover
         ...
+
+    def get_embedding_dim(self) -> int:
+        """Return the dimensionality of the embedding vectors."""
+        ...

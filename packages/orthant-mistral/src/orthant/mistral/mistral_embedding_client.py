@@ -62,3 +62,6 @@ class MistralEmbeddingClient(EmbeddingClient):
     async def encode_query_batch_async(self, queries: Sequence[str]) -> Sequence[Sequence[float]]:
         """Encode a batch of queries; delegated to document batch encoder."""
         return await self.encode_document_batch_async(queries)
+
+    def get_embedding_dim(self) -> int:
+        return 1024

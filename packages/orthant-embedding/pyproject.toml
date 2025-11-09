@@ -7,7 +7,7 @@ name = "orthant-embedding"
 version = "0.1.0"
 description = "Embeddings support for Orthant"
 readme = "README.md"
-requires-python = ">=3.13.8"
+requires-python = ">=3.13"
 dependencies = [
     "orthant-documents",
 ]

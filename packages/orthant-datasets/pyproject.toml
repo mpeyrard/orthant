@@ -10,11 +10,7 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "fastapi>=0.119.0",
-]
-
-[project.optional-dependencies]
-test = [
-    "pytest>=8.4.2",
+    "watchfiles>=1.1.1",
 ]
 
 [tool.setuptools]
@@ -27,7 +23,6 @@ include = ["orthant*"]
 "" = "src"
 
 [tool.pytest.ini_options]
-# Retain helpful pytest config
 testpaths = ["tests"]
 pythonpath = ["src"]
-markers = ["unit: unit tests"]
+markers = ["unit: unit tests", "system: system tests", "integration: integration tests"]
